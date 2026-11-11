@@ -1,6 +1,6 @@
 /* Konkurs Tematyczny „W zdrowym ciele, zdrowy duch” 2026/2027 — ETAP SZKOLNY
    Zadania ćwiczeniowe ułożone wg Załącznika nr 2 (zakres wiedzy, etap szkolny, pkt 1–8).
-   To NIE są oficjalne zadania konkursowe — konkurs odbywa się po raz pierwszy, arkuszy archiwalnych brak.
+   To NIE są oficjalne zadania konkursowe (zadania z arkusza 2025/2026 są w dane-2526-szkolny.js).
    t: numer tematu z zakresu wymagań (1–8)
    c: indeksy poprawnych odpowiedzi w oryginalnej kolejności o[]
    u: 1 = zadanie na umiejętności z części III zakresu (tabele, wykresy, schematy, teksty źródłowe)

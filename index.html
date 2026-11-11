@@ -134,7 +134,13 @@ a{color:var(--accent)}
 
   <div class="card">
     <fieldset>
-      <legend>Tematy (zakres wymagań etapu szkolnego)</legend>
+      <legend>Pula zadań</legend>
+      <div class="opts" id="fZr"></div>
+      <p class="count">Zadania z zeszłorocznego arkusza mają zwykle 6 odpowiedzi (A–F), z których poprawnych bywa 3–5 — tak jak na konkursie.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Tematy (zakres wymagań etapu szkolnego 2026/2027)</legend>
       <div class="opts" id="fTem"></div>
       <div class="row" style="margin-top:10px"><button id="temAll" style="padding:5px 12px;font-size:.85rem">zaznacz wszystkie</button><button id="temNone" style="padding:5px 12px;font-size:.85rem">odznacz wszystkie</button></div>
     </fieldset>
@@ -193,16 +199,25 @@ a{color:var(--accent)}
   </div>
 </section>
 
-<p class="note">Konkurs odbywa się po raz pierwszy, więc nie ma arkuszy z poprzednich lat. Zadania są ćwiczeniowe — ułożone według
-<a href="https://kuratorium.krakow.pl/wp-content/uploads/2026/07/zal.-nr-2-zakres-wiedzy-i-umiejetnosci-oraz-wykaz-literatury-2.pdf" target="_blank" rel="noopener">zakresu wiedzy i umiejętności (zał. nr 2)</a>,
-a nie przepisane z oficjalnego arkusza. Literatura: B. Woynarowska, M. Woynarowska, <i>Edukacja zdrowotna</i>, PWN 2025; podręczniki biologii i EDB.
-<a href="https://kuratorium.krakow.pl/konkurs-tematyczny-w-zdrowym-ciele-zdrowy-duch-dla-uczniow-szkol-podstawowych-wojewodztwa-malopolskiego-w-roku-szkolnym-2026-2027/" target="_blank" rel="noopener">Strona konkursu</a>.</p>
+<p class="note"><b>Zadania ćwiczeniowe</b> ułożono według
+<a href="https://kuratorium.krakow.pl/wp-content/uploads/2026/07/zal.-nr-2-zakres-wiedzy-i-umiejetnosci-oraz-wykaz-literatury-2.pdf" target="_blank" rel="noopener">zakresu wiedzy i umiejętności 2026/2027 (zał. nr 2)</a>;
+nie pochodzą z oficjalnych arkuszy. <b>Zadania 2025/2026</b> pochodzą z
+<a href="https://kuratorium.krakow.pl/wp-content/uploads/2025/08/arkusz-zadan-edukacja-zdrowotna.pdf" target="_blank" rel="noopener">arkusza etapu szkolnego</a>
+(Kuratorium Oświaty w Krakowie), a poprawne odpowiedzi są zgodne ze
+<a href="https://kuratorium.krakow.pl/wp-content/uploads/2025/08/etap-szkolny-schemat-oceniania-3.pdf" target="_blank" rel="noopener">schematem oceniania</a>;
+pominięto zadania 1, 22, 33 i 34 unieważnione Komunikatem nr 3. Literatura: B. Woynarowska, M. Woynarowska, <i>Edukacja zdrowotna</i>, PWN 2025; podręczniki biologii i EDB.
+Strona konkursu: <a href="https://kuratorium.krakow.pl/konkurs-tematyczny-w-zdrowym-ciele-zdrowy-duch-dla-uczniow-szkol-podstawowych-wojewodztwa-malopolskiego-w-roku-szkolnym-2026-2027/" target="_blank" rel="noopener">2026/2027</a> ·
+<a href="https://kuratorium.krakow.pl/konkurs-tematyczny-w-zdrowym-ciele-zdrowy-duch-dla-uczniow-szkol-podstawowych-wojewodztwa-malopolskiego-w-roku-szkolnym-2025-2026/" target="_blank" rel="noopener">2025/2026</a>.</p>
 
 </div>
 
 <script src="dane-szkolny.js"></script>
+<script src="dane-2526-szkolny.js"></script>
 <script>
-const DB = D_SZKOLNY;
+const DB = D_SZKOLNY.map(q=>({...q, zr:'cw'}))
+  .concat(D25_SZKOLNY.map(q=>({...q, zr:'of'})));
+const ZRODLA = {cw:'Zadania ćwiczeniowe', of:'Oficjalne zadania 2025/2026 (etap szkolny)'};
+const ARKUSZ_2526 = 'https://kuratorium.krakow.pl/wp-content/uploads/2025/08/arkusz-zadan-edukacja-zdrowotna.pdf';
 const TEMATY = {
   1:'Zdrowie i zdrowy styl życia',
   2:'Czynniki wpływające na zdrowie',
@@ -211,12 +226,15 @@ const TEMATY = {
   5:'Złe diety, suplementy, energetyki',
   6:'Rozpoznawanie objawów chorobowych',
   7:'Gorączka',
-  8:'Pierwsza pomoc'
+  8:'Pierwsza pomoc',
+  9:'W 2026/2027 dopiero na etapie rejonowym'
 };
 const LTR = 'ABCDEFGH'.split('');
+function tematNazwa(t){ return t<9 ? `${t}. ${TEMATY[t]}` : TEMATY[t]; }
 
 const state = {
-  tem:{1:true,2:true,3:true,4:true,5:true,6:true,7:true,8:true},
+  tem:{1:true,2:true,3:true,4:true,5:true,6:true,7:true,8:true,9:false},
+  zr:{cw:true, of:true},
   ile:20,
   tryb:'nat',          // 'nat' = od razu, 'koniec' = dopiero na końcu
   pula:[], i:0, odp:[], sprawdzone:false
@@ -232,10 +250,16 @@ function chip(box, val, label, group, type){
   return l.querySelector('input');
 }
 function buildFilters(){
+  const zb = document.getElementById('fZr');
+  Object.keys(ZRODLA).forEach(v=>{
+    const n = DB.filter(q=>q.zr===v).length;
+    const i = chip(zb, v, `${ZRODLA[v]} <span class="count">(${n})</span>`, 'zr', 'checkbox');
+    i.checked = state.zr[v];
+    i.onchange = ()=>{ state.zr[v]=i.checked; refresh(); };
+  });
   const tb0 = document.getElementById('fTem');
   Object.keys(TEMATY).forEach(v=>{
-    const n = DB.filter(q=>q.t==v).length;
-    const i = chip(tb0, v, `${v}. ${TEMATY[v]} <span class="count">(${n})</span>`, 'tem', 'checkbox');
+    const i = chip(tb0, v, `${v<9?v+'. ':''}${TEMATY[v]} <span class="count" id="cnt_${v}"></span>`, 'tem', 'checkbox');
     i.checked = state.tem[v];
     i.onchange = ()=>{ state.tem[v]=i.checked; refresh(); };
   });
@@ -262,9 +286,14 @@ function buildFilters(){
   refresh();
 }
 function matching(){
-  return DB.filter(q => state.tem[q.t]);
+  return DB.filter(q => state.tem[q.t] && state.zr[q.zr]);
 }
 function refresh(){
+  Object.keys(TEMATY).forEach(v=>{
+    const n = DB.filter(q=>q.t==v && state.zr[q.zr]).length;
+    document.getElementById('cnt_'+v).textContent = `(${n})`;
+    document.getElementById('tem_'+v).closest('.chip').style.display = (v==9 && n===0) ? 'none' : '';
+  });
   document.querySelectorAll('.chip').forEach(l=>{
     l.classList.toggle('on', l.querySelector('input').checked);
   });
@@ -307,7 +336,8 @@ function render(){
   document.getElementById('mWynik').textContent = state.tryb==='nat' ? `${pkt} pkt` : '';
 
   document.getElementById('qTags').innerHTML =
-    `<span class="tag">${q.t}. ${TEMATY[q.t]}</span>`+
+    (q.zr==='of' ? `<span class="tag tem">2025/2026 · etap szkolny</span>` : '')+
+    `<span class="tag">${tematNazwa(q.t)}</span>`+
     (q.u ? `<span class="tag konw" title="Zadanie sprawdza umiejętności z części III zakresu: analizę tabel, wykresów, schematów i tekstów źródłowych">praca ze źródłem</span>` : '')+
     `<span class="tag" style="background:transparent;color:var(--muted)">zad. ${q.n}</span>`;
 
@@ -383,7 +413,7 @@ function finish(){
   let html = '<tr><th>Temat</th><th>Wynik</th></tr>';
   Object.keys(grupy).sort((a,b)=>a-b).forEach(t=>{
     const g = grupy[t];
-    html += `<tr><td>${t}. ${TEMATY[t]}</td><td>${g.ok} / ${g.n} (${Math.round(g.ok/g.n*100)}%)</td></tr>`;
+    html += `<tr><td>${tematNazwa(t)}</td><td>${g.ok} / ${g.n} (${Math.round(g.ok/g.n*100)}%)</td></tr>`;
   });
   document.getElementById('rTable').innerHTML = html;
 
@@ -397,7 +427,9 @@ function finish(){
       <p class="yours">Twoja odpowiedź: ${o.sel.length? o.sel.map(i=>o.item.opcje[i]).join(' · ') : '(brak)'}</p>
       <p class="right">Poprawnie: ${o.item.poprawne.map(i=>o.item.opcje[i]).join(' · ')}</p>
       ${q.x?`<p style="color:var(--muted)">${q.x}</p>`:''}
-      <p class="lnk">Temat ${q.t}: ${TEMATY[q.t]}, zad. ${q.n}</p>
+      <p class="lnk">${q.zr==='of'
+        ? `Arkusz 2025/2026, etap szkolny, zad. ${q.n} — <a href="${ARKUSZ_2526}" target="_blank" rel="noopener">otwórz PDF</a>`
+        : `Zadanie ćwiczeniowe ${q.n}`} · ${tematNazwa(q.t)}</p>
     </div>`;
   }).join('');
 
