@@ -8,23 +8,27 @@ Konkursu Tematycznego **„W zdrowym ciele, zdrowy duch”** 2026/2027
 
 ## Zakres
 
-**106 zadań zamkniętych** (jednokrotnego i wielokrotnego wyboru), ułożonych według
+**120 zadań zamkniętych** (jednokrotnego i wielokrotnego wyboru), ułożonych według
 [zakresu wiedzy i umiejętności dla etapu szkolnego (zał. nr 2 do regulaminu)](https://kuratorium.krakow.pl/wp-content/uploads/2026/07/zal.-nr-2-zakres-wiedzy-i-umiejetnosci-oraz-wykaz-literatury-2.pdf):
 
 | # | Temat | Zadań |
 |---|---|---:|
-| 1 | Pojęcie zdrowia i zdrowego stylu życia | 10 |
-| 2 | Czynniki wpływające na zdrowie i samopoczucie | 10 |
-| 3 | Higiena osobista, środki higieniczne i pielęgnacyjne | 11 |
-| 4 | Zasady zdrowego żywienia i suplementacji | 18 |
-| 5 | Skutki nieprawidłowych diet, nadmiaru suplementów, napojów energetycznych | 12 |
-| 6 | Rozpoznawanie objawów chorobowych | 14 |
-| 7 | Gorączka i jej rola w organizmie | 11 |
-| 8 | Pierwsza pomoc w stanach zagrożenia życia i zdrowia | 20 |
-| | | **106** |
+| 1 | Pojęcie zdrowia i zdrowego stylu życia | 11 |
+| 2 | Czynniki wpływające na zdrowie i samopoczucie | 12 |
+| 3 | Higiena osobista, środki higieniczne i pielęgnacyjne | 12 |
+| 4 | Zasady zdrowego żywienia i suplementacji | 21 |
+| 5 | Skutki nieprawidłowych diet, nadmiaru suplementów, napojów energetycznych | 14 |
+| 6 | Rozpoznawanie objawów chorobowych | 15 |
+| 7 | Gorączka i jej rola w organizmie | 13 |
+| 8 | Pierwsza pomoc w stanach zagrożenia życia i zdrowia | 22 |
+| | | **120** |
 
-Część zadań sprawdza umiejętności z części III zakresu: proste obliczenia
-(kalorie, dawki kofeiny, procenty) oraz analizę danych z tekstu i pomiarów.
+Umiejętności z części III zakresu (obowiązujące na wszystkich etapach) ćwiczy
+**14 zadań oznaczonych „praca ze źródłem”**: tabele (wartość odżywcza, zawartość kofeiny,
+dzienniczek żywieniowy, wyniki doświadczenia, objawy), wykresy i diagramy (sen, temperatura
+w czasie choroby, struktura energii w diecie, wyniki ankiety), schematy przyczynowo-skutkowe
+i kolejności działań oraz tekst źródłowy. Kilkanaście dalszych zadań wymaga prostych obliczeń
+(kalorie, dawki kofeiny, procenty, średnie). Dane w ankietach i doświadczeniach są przykładowe.
 
 > **Uwaga:** konkurs odbywa się po raz pierwszy, więc nie ma arkuszy z poprzednich lat.
 > Zadania są **ćwiczeniowe** — ułożone na podstawie zakresu wymagań i aktualnych
@@ -47,7 +51,7 @@ Część zadań sprawdza umiejętności z części III zakresu: proste obliczeni
 
 ```
 index.html        aplikacja (HTML + CSS + logika)
-dane-szkolny.js   zadania etapu szkolnego (106)
+dane-szkolny.js   zadania etapu szkolnego (120) + funkcje rysujące tabele, wykresy i schematy
 ```
 
 ## Źródło

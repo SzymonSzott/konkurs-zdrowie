@@ -78,6 +78,15 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .tag.konw{background:var(--warn-bg);color:var(--warn)}
 .intro{background:var(--accent-soft);border-left:3px solid var(--accent);
   padding:12px 14px;border-radius:0 8px 8px 0;font-size:.93rem;margin-bottom:14px;white-space:pre-wrap}
+.intro .tw{overflow-x:auto;white-space:normal;margin:8px 0;background:var(--card);border-radius:6px}
+.intro table{margin:0;font-size:.86rem}
+.intro td,.intro th{padding:5px 8px;text-align:center}
+.intro td:first-child,.intro th:first-child{text-align:left}
+.intro svg{display:block;margin:8px 0;background:var(--card);border-radius:6px;padding:4px}
+.chain{display:flex;flex-wrap:wrap;gap:6px;align-items:center;white-space:normal;margin:8px 0}
+.chain span{border:1px solid var(--accent);background:var(--card);border-radius:6px;padding:5px 9px;font-size:.88rem}
+.chain span.gap{border-style:dashed;font-weight:700}
+.chain b{color:var(--accent)}
 .q{font-weight:600;margin:0 0 14px;font-size:1.04rem}
 .answers{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
 .ans{display:flex;gap:11px;align-items:flex-start;border:1px solid var(--line);
@@ -299,6 +308,7 @@ function render(){
 
   document.getElementById('qTags').innerHTML =
     `<span class="tag">${q.t}. ${TEMATY[q.t]}</span>`+
+    (q.u ? `<span class="tag konw" title="Zadanie sprawdza umiejętności z części III zakresu: analizę tabel, wykresów, schematów i tekstów źródłowych">praca ze źródłem</span>` : '')+
     `<span class="tag" style="background:transparent;color:var(--muted)">zad. ${q.n}</span>`;
 
   document.getElementById('qIntro').innerHTML = q.w ? `<div class="intro">${q.w}</div>` : '';

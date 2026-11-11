@@ -2,7 +2,65 @@
    Zadania ćwiczeniowe ułożone wg Załącznika nr 2 (zakres wiedzy, etap szkolny, pkt 1–8).
    To NIE są oficjalne zadania konkursowe — konkurs odbywa się po raz pierwszy, arkuszy archiwalnych brak.
    t: numer tematu z zakresu wymagań (1–8)
-   c: indeksy poprawnych odpowiedzi w oryginalnej kolejności o[]                                   */
+   c: indeksy poprawnych odpowiedzi w oryginalnej kolejności o[]
+   u: 1 = zadanie na umiejętności z części III zakresu (tabele, wykresy, schematy, teksty źródłowe)
+   Dane liczbowe w ankietach i doświadczeniach są przykładowe (ułożone na potrzeby zadań).        */
+
+/* ---------- pomocnicze: tabele, wykresy, schematy (renderowane w treści zadania) ---------- */
+function TAB(head, rows){
+  return `<div class="tw"><table><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr>`+
+    rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')+`</table></div>`;
+}
+function liczba(v, dec){ return (dec==null ? String(v) : v.toFixed(dec)).replace('.', ','); }
+/* poziomy wykres słupkowy: dane = [[etykieta, wartość], ...] */
+function SLUPKI(dane, o){
+  const W=360, L=o.L||110, R=50, row=26, H=dane.length*row+(o.prog!=null?20:6);
+  const sx = v => L + (W-L-R)*v/o.max;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.opis}" style="width:100%;max-width:${W}px;height:auto;font-size:12px">`;
+  dane.forEach(([lab,v],i)=>{
+    const y=i*row+4, w=sx(v)-L;
+    s += `<text x="${L-6}" y="${y+13}" text-anchor="end" fill="currentColor">${lab}</text>`+
+         `<rect x="${L}" y="${y}" width="${w.toFixed(1)}" height="18" rx="3" style="fill:var(--accent)"/>`+
+         `<text x="${(L+w+5).toFixed(1)}" y="${y+13}" fill="currentColor">${liczba(v)}${o.jedn||''}</text>`;
+  });
+  if(o.prog!=null){
+    const x=sx(o.prog).toFixed(1);
+    s += `<line x1="${x}" x2="${x}" y1="0" y2="${dane.length*row+2}" stroke-dasharray="4 3" stroke-width="1.5" style="stroke:var(--bad)"/>`+
+         `<text x="${x}" y="${H-3}" text-anchor="middle" style="fill:var(--bad)">${o.progOpis||''}</text>`;
+  }
+  return s + '</svg>';
+}
+/* wykres liniowy: pkt = [[etykieta osi X, wartość], ...] */
+function LINIA(pkt, o){
+  const W=360, H=220, L=52, R=14, T=18, B=40, iw=W-L-R, ih=H-T-B;
+  const pad = 20;   // odsunięcie skrajnych punktów od osi, żeby etykiety się nie nakładały
+  const x = i => L + pad + i*(iw-2*pad)/(pkt.length-1);
+  const y = v => T + ih*(o.max-v)/(o.max-o.min);
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.opis}" style="width:100%;max-width:${W}px;height:auto;font-size:11px">`;
+  for(let v=o.min; v<=o.max+1e-9; v+=o.krok){
+    const yy=y(v).toFixed(1);
+    s += `<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" style="stroke:var(--line)"/>`+
+         `<text x="${L-5}" y="${+yy+4}" text-anchor="end" fill="currentColor">${liczba(v,o.dec)}</text>`;
+  }
+  if(o.prog!=null){
+    const yy=y(o.prog).toFixed(1);
+    s += `<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" stroke-dasharray="5 4" stroke-width="1.5" style="stroke:var(--bad)"/>`;
+  }
+  s += `<polyline fill="none" stroke-width="2" style="stroke:var(--accent)" points="${pkt.map((p,i)=>x(i).toFixed(1)+','+y(p[1]).toFixed(1)).join(' ')}"/>`;
+  pkt.forEach((p,i)=>{
+    const cx=x(i).toFixed(1), cy=y(p[1]).toFixed(1);
+    s += `<circle cx="${cx}" cy="${cy}" r="3.5" style="fill:var(--accent)"/>`+
+         `<text x="${cx}" y="${cy-7}" text-anchor="middle" fill="currentColor" font-weight="600">${liczba(p[1],o.dec)}</text>`+
+         `<text x="${cx}" y="${H-B+15}" text-anchor="middle" fill="currentColor">${p[0]}</text>`;
+  });
+  if(o.osX) s += `<text x="${L+iw/2}" y="${H-5}" text-anchor="middle" fill="currentColor">${o.osX}</text>`;
+  if(o.osY) s += `<text x="11" y="${T+ih/2}" text-anchor="middle" fill="currentColor" transform="rotate(-90 11 ${T+ih/2})">${o.osY}</text>`;
+  return s + '</svg>';
+}
+/* schemat łańcucha przyczyn i skutków; '?' oznacza lukę */
+function SCHEMAT(kroki){
+  return `<div class="chain">`+kroki.map(k=>k==='?'?`<span class="gap">?</span>`:`<span>${k}</span>`).join('<b>→</b>')+`</div>`;
+}
 
 const D_SZKOLNY = [
 
@@ -570,5 +628,137 @@ const D_SZKOLNY = [
 {n:"8.20", t:8,
  q:"Które zasady dotyczą prawidłowego użycia AED podczas resuscytacji?",
  o:["należy wykonywać uciśnięcia klatki piersiowej do czasu przyniesienia i włączenia AED","podczas analizy rytmu serca i wyładowania nikt nie może dotykać poszkodowanego","elektrody nakleja się na odsłoniętą klatkę piersiową zgodnie z rysunkiem na elektrodach","po wyładowaniu należy zaczekać 5 minut przed wznowieniem uciśnięć"], c:[0,1,2],
- x:"Po wyładowaniu (lub gdy AED go nie zaleca) natychmiast wznawia się uciśnięcia i postępuje według poleceń urządzenia."}
+ x:"Po wyładowaniu (lub gdy AED go nie zaleca) natychmiast wznawia się uciśnięcia i postępuje według poleceń urządzenia."},
+
+/* ============ Zadania na umiejętności (część III zakresu): tabele, wykresy, schematy, teksty ============ */
+
+{n:"1.11", t:1, u:1,
+ w:"Diagram przedstawia udział czterech grup czynników w kształtowaniu zdrowia człowieka (wg koncepcji M. Lalonde’a)."+
+   SLUPKI([["Styl życia",53],["Środowisko",21],["Czynniki genetyczne",16],["Opieka zdrowotna",10]],
+          {max:60, jedn:"%", L:140, opis:"Udział czynników wpływających na zdrowie"}),
+ q:"Które wnioski wynikają z diagramu?",
+ o:["Styl życia wpływa na zdrowie ponad 5 razy silniej niż opieka zdrowotna.",
+    "Opieka zdrowotna ma największy wpływ na zdrowie.",
+    "Styl życia i środowisko łącznie odpowiadają za około trzy czwarte wpływu na zdrowie.",
+    "Czynniki genetyczne mają większy wpływ na zdrowie niż środowisko."], c:[0,2],
+ x:"53% : 10% = 5,3; 53% + 21% = 74% ≈ ¾. Czynniki genetyczne (16%) mają mniejszy udział niż środowisko (21%)."},
+
+{n:"2.11", t:2, u:1,
+ w:"Wykres przedstawia czas snu 13-letniego ucznia w kolejnych dniach tygodnia. Przerywana linia oznacza dolną granicę zalecanego czasu snu dla nastolatków (8 h)."+
+   SLUPKI([["poniedziałek",6.5],["wtorek",7],["środa",6],["czwartek",6.5],["piątek",7],["sobota",10],["niedziela",10.5]],
+          {max:12, jedn:" h", L:92, prog:8, progOpis:"8 h", opis:"Czas snu ucznia w dniach tygodnia"}),
+ q:"Które stwierdzenia są zgodne z danymi z wykresu?",
+ o:["W dni szkolne (poniedziałek–piątek) uczeń śpi krócej, niż zaleca się nastolatkom.",
+    "Średni czas snu ucznia w dni szkolne wynosi 6,6 h.",
+    "W weekend uczeń śpi wyraźnie dłużej niż w dni szkolne — „odsypia” niedobór snu.",
+    "Uczeń śpi zgodnie z zaleceniami przez cały tydzień."], c:[0,1,2],
+ x:"(6,5 + 7 + 6 + 6,5 + 7) : 5 = 33 : 5 = 6,6 h. „Odsypianie” w weekend nie wyrównuje skutków niedoboru snu i rozregulowuje rytm dobowy."},
+
+{n:"2.12", t:2, u:1,
+ w:"Schemat przedstawia łańcuch przyczyn i skutków. Jedno ogniwo zastąpiono znakiem zapytania."+
+   SCHEMAT(["Korzystanie z telefonu w łóżku do późnej nocy","?","Za krótki sen","Senność i trudności z koncentracją na lekcjach"]),
+ q:"Które sformułowanie należy wpisać w miejsce znaku zapytania?",
+ o:["Zahamowanie wydzielania melatoniny przez niebieskie światło ekranu i opóźnione zasypianie",
+    "Zwiększone wydzielanie melatoniny i szybkie zasypianie",
+    "Spadek temperatury ciała poniżej 35°C",
+    "Wzrost poziomu witaminy D we krwi"], c:[0]},
+
+{n:"3.12", t:3, u:1,
+ w:"Uczniowie przeprowadzili doświadczenie. Każda osoba odcisnęła palce na pożywce w szalce Petriego, ale ręce przygotowano w różny sposób. Szalki przez 3 dni trzymano w tej samej temperaturze, a potem policzono kolonie drobnoustrojów."+
+   TAB(["Próba","Przygotowanie rąk","Liczba kolonii"],
+       [["A","ręce niemyte","120"],["B","ręce opłukane samą wodą przez 5 s","85"],["C","ręce umyte wodą z mydłem przez 30 s","12"]]),
+ q:"Które wnioski są poprawne?",
+ o:["Mycie rąk mydłem przez 30 s zmniejszyło liczbę kolonii 10-krotnie w porównaniu z rękami niemytymi.",
+    "Opłukanie rąk samą wodą usunęło większość drobnoustrojów.",
+    "Próba A pełniła w doświadczeniu rolę próby kontrolnej.",
+    "Doświadczenie dowodzi, że mydło zabija wszystkie drobnoustroje."], c:[0,2],
+ x:"120 : 12 = 10. Po opłukaniu wodą zostało 85 ze 120 kolonii, czyli ok. 70% — usunięto mniejszość. W próbie C nadal wyrosło 12 kolonii, więc nie wszystkie drobnoustroje zostały usunięte."},
+
+{n:"4.19", t:4, u:1,
+ w:"W tabeli podano wartość odżywczą dwóch jogurtów (w 100 g produktu)."+
+   TAB(["Składnik (w 100 g)","Jogurt naturalny","Jogurt owocowy"],
+       [["Wartość energetyczna","61 kcal","98 kcal"],["Białko","4,3 g","3,2 g"],["Węglowodany, w tym cukry","4,7 g","13,5 g"],["Tłuszcz","3,0 g","2,6 g"],["Wapń","150 mg","110 mg"]]),
+ q:"Które wnioski wynikają z danych w tabeli?",
+ o:["Jogurt owocowy zawiera prawie 3 razy więcej cukrów niż naturalny.",
+    "Jogurt naturalny dostarcza więcej białka niż owocowy.",
+    "Jogurt owocowy jest lepszym źródłem wapnia niż naturalny.",
+    "Kubek jogurtu owocowego (150 g) dostarcza ok. 20 g cukrów."], c:[0,1,3],
+ x:"13,5 : 4,7 ≈ 2,9; 13,5 g × 1,5 ≈ 20 g. Jogurt naturalny zawiera więcej wapnia (150 mg)."},
+
+{n:"4.20", t:4, u:1,
+ w:"Diagram pokazuje, jaki procent energii z jednodniowego jadłospisu ucznia pochodzi z poszczególnych makroskładników. Zalecenia: węglowodany 45–65%, tłuszcze 20–35%, białka 10–20% energii."+
+   SLUPKI([["Węglowodany",40],["Tłuszcze",45],["Białka",15]], {max:70, jedn:"%", L:100, opis:"Udział makroskładników w energii jadłospisu"}),
+ q:"Które stwierdzenia dotyczące tego jadłospisu są prawdziwe?",
+ o:["Z tłuszczów pochodzi więcej energii, niż się zaleca.",
+    "Z węglowodanów pochodzi mniej energii, niż się zaleca.",
+    "Udział białek mieści się w zalecanym zakresie.",
+    "Jadłospis jest prawidłowo zbilansowany."], c:[0,1,2]},
+
+{n:"4.21", t:4, u:1,
+ w:"Uczeń zapisał w dzienniczku wszystko, co zjadł i wypił w ciągu jednego dnia. Spać poszedł o 22:00."+
+   TAB(["Godzina","Co zjadł / wypił"],
+       [["6:45","szklanka słodzonej herbaty"],["10:00","drożdżówka, słodzony napój gazowany"],["14:30","zupa pomidorowa, kotlet schabowy, ziemniaki"],["17:00","paczka chipsów"],["21:45","trzy kanapki z wędliną"]]),
+ q:"Które błędy żywieniowe popełnił uczeń?",
+ o:["brak pełnowartościowego śniadania","spożycie kolacji tuż przed snem","brak warzyw i owoców w całym jadłospisie","zbyt długa przerwa między obiadem a podwieczorkiem"], c:[0,1,2],
+ x:"Między obiadem (14:30) a podwieczorkiem (17:00) minęło 2,5 h — to prawidłowy odstęp. Błędem był natomiast sam wybór podwieczorku (chipsy) i słodkie napoje."},
+
+{n:"5.13", t:5, u:1,
+ w:"W pewnej szkole przeprowadzono anonimową ankietę. Diagram pokazuje, jaki odsetek uczniów z każdego rocznika pije napoje energetyczne co najmniej raz w tygodniu."+
+   SLUPKI([["klasa 5",8],["klasa 6",14],["klasa 7",22],["klasa 8",31]], {max:50, jedn:"%", L:70, opis:"Odsetek uczniów pijących napoje energetyczne"}),
+ q:"Które wnioski wynikają z diagramu?",
+ o:["Odsetek uczniów pijących napoje energetyczne rośnie w starszych klasach.",
+    "W klasie 8 prawie co trzeci uczeń pije napoje energetyczne co najmniej raz w tygodniu.",
+    "W klasie 7 odsetek ten jest dokładnie dwa razy większy niż w klasie 5.",
+    "Większość uczniów klasy 8 pije napoje energetyczne co tydzień."], c:[0,1],
+ x:"31% ≈ ⅓. 22% : 8% = 2,75, a nie 2. 31% to mniej niż połowa, więc nie jest to większość."},
+
+{n:"5.14", t:5, u:1,
+ w:"Tabela przedstawia przybliżoną zawartość kofeiny w wybranych produktach. Bezpieczna dzienna dawka kofeiny dla dzieci i młodzieży wynosi 3 mg na 1 kg masy ciała."+
+   TAB(["Produkt","Porcja","Kofeina"],
+       [["napój energetyczny","puszka 250 ml","80 mg"],["napój typu cola","puszka 330 ml","32 mg"],["kawa","filiżanka 200 ml","90 mg"],["herbata czarna","szklanka 200 ml","45 mg"],["czekolada gorzka","50 g","25 mg"]]),
+ q:"Które zestawy spożyte w ciągu jednego dnia przekraczają bezpieczną dawkę kofeiny dla ucznia o masie 40 kg?",
+ o:["napój energetyczny + cola","napój energetyczny + herbata","dwie puszki coli + czekolada gorzka","kawa + herbata"], c:[1,3],
+ x:"Limit: 3 mg × 40 = 120 mg. Energetyk + cola = 112 mg; energetyk + herbata = 125 mg; 2 cole + czekolada = 89 mg; kawa + herbata = 135 mg."},
+
+{n:"6.15", t:6, u:1,
+ w:"W tabeli opisano objawy trzech osób."+
+   TAB(["Osoba","Objawy"],
+       [["1","silny, uciskający ból w klatce piersiowej od 20 minut, duszność, zimny pot"],["2","katar, lekki ból gardła, temperatura 37,2°C, dobre samopoczucie"],["3","gorączka 39,5°C, sztywność karku, wysypka, która nie blednie pod naciskiem szklanki"]]),
+ q:"Które osoby wymagają natychmiastowego wezwania pomocy (112 lub 999)?",
+ o:["osoba 1","osoba 2","osoba 3","żadna z nich"], c:[0,2],
+ x:"Osoba 1 — możliwy zawał serca; osoba 3 — możliwe zapalenie opon mózgowo-rdzeniowych i sepsa. Objawy osoby 2 wskazują na przeziębienie."},
+
+{n:"7.12", t:7, u:1,
+ w:"Wykres przedstawia temperaturę ciała ucznia mierzoną przez 4 dni choroby rano (r, 8:00) i wieczorem (w, 20:00). Przerywana linia oznacza 38°C."+
+   LINIA([["1 r",36.8],["1 w",38.9],["2 r",38.2],["2 w",39.4],["3 r",37.9],["3 w",38.3],["4 r",36.9],["4 w",36.7]],
+         {min:36.5, max:40, krok:0.5, dec:1, prog:38, osX:"dzień choroby i pora pomiaru", osY:"°C", opis:"Temperatura ciała ucznia w kolejnych dniach choroby"}),
+ q:"Które stwierdzenia są zgodne z wykresem?",
+ o:["Najwyższą temperaturę zmierzono wieczorem 2. dnia.",
+    "W dniach 1–3 temperatura wieczorem była wyższa niż rano tego samego dnia.",
+    "W 4. dniu temperatura ciała ucznia była prawidłowa.",
+    "Gorączka trwała dłużej niż 4 dni."], c:[0,1,2],
+ x:"Wieczorny wzrost temperatury jest typowy dla gorączki. W 4. dniu pomiary (36,9°C i 36,7°C) mieszczą się w normie."},
+
+{n:"7.13", t:7, u:1,
+ w:"Wykres przedstawia temperaturę ciała ucznia mierzoną przez 4 dni choroby rano (r, 8:00) i wieczorem (w, 20:00). Przerywana linia oznacza 38°C."+
+   LINIA([["1 r",36.8],["1 w",38.9],["2 r",38.2],["2 w",39.4],["3 r",37.9],["3 w",38.3],["4 r",36.9],["4 w",36.7]],
+         {min:36.5, max:40, krok:0.5, dec:1, prog:38, osX:"dzień choroby i pora pomiaru", osY:"°C", opis:"Temperatura ciała ucznia w kolejnych dniach choroby"}),
+ q:"W ilu pomiarach temperatura przekroczyła 38°C (gorączka)?",
+ o:["3","4","5","6"], c:[1],
+ x:"Powyżej 38°C: 38,9; 38,2; 39,4; 38,3 — cztery pomiary. 37,9°C to stan podgorączkowy."},
+
+{n:"8.21", t:8, u:1,
+ w:"Schemat przedstawia kolejne czynności świadka zdarzenia, który zauważył leżącą osobę (wg wytycznych resuscytacji). Jeden krok zastąpiono znakiem zapytania."+
+   SCHEMAT(["Oceń bezpieczeństwo","Sprawdź przytomność, zawołaj o pomoc","?","Oceń oddech (do 10 s)","Wezwij pomoc — 112","30 uciśnięć : 2 oddechy"]),
+ q:"Jaki krok powinien znaleźć się w miejscu znaku zapytania?",
+ o:["Udrożnij drogi oddechowe (odchyl głowę, unieś żuchwę).","Podaj poszkodowanemu wodę do picia.","Ułóż poszkodowanego w pozycji bocznej ustalonej.","Wykonaj 5 uderzeń między łopatki."], c:[0],
+ x:"Oddech ocenia się dopiero po udrożnieniu dróg oddechowych — u nieprzytomnego język może je zablokować."},
+
+{n:"8.22", t:8, u:1,
+ w:"Przeczytaj tekst.\nNagłe zatrzymanie krążenia to stan, w którym serce przestaje skutecznie pompować krew. Najczęstszą przyczyną u dorosłych jest migotanie komór — chaotyczna praca serca, którą można przerwać wyładowaniem elektrycznym (defibrylacją). Szacuje się, że z każdą minutą zwłoki w defibrylacji szansa przeżycia zmniejsza się o ok. 7–10%. Uciśnięcia klatki piersiowej wykonywane przez świadków spowalniają ten spadek, bo podtrzymują przepływ krwi do mózgu i serca. Automatyczne defibrylatory zewnętrzne (AED) umieszcza się w miejscach publicznych, a ich obsługa jest możliwa dla każdego dzięki poleceniom głosowym.",
+ q:"Które wnioski wynikają z tekstu?",
+ o:["Im szybciej zostanie użyty AED, tym większa szansa przeżycia poszkodowanego.",
+    "Uciskanie klatki piersiowej przez świadków ma sens jeszcze przed przyjazdem karetki.",
+    "Defibrylacja jest skuteczna wyłącznie w pierwszej minucie po zatrzymaniu krążenia.",
+    "AED może obsługiwać wyłącznie lekarz lub ratownik medyczny."], c:[0,1]}
 ];
