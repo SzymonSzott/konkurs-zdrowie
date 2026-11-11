@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>W zdrowym ciele, zdrowy duch — test</title>
+
+<!-- ============================================================
+     Statystyki odwiedzin (GoatCounter): bez ciasteczek, bez zapisu
+     adresów IP, nic nie wyświetla się użytkownikowi. Panel:
+     https://KOD.goatcounter.com  —  wpisz swój kod poniżej.
+     Puste GC_KOD = zliczanie wyłączone, strona działa normalnie.
+     ============================================================ -->
+<script>
+const GC_KOD = 'szymonszott';
+if(GC_KOD){
+  const gs = document.createElement('script');
+  gs.async = true;
+  gs.src = 'https://gc.zgo.at/count.js';
+  gs.setAttribute('data-goatcounter', 'https://'+GC_KOD+'.goatcounter.com/count');
+  document.head.appendChild(gs);
+}
+/* Zdarzenie własne — cicho ignorowane, gdy zliczanie wyłączone lub zablokowane. */
+function stat(sciezka, tytul){
+  try{
+    if(window.goatcounter && typeof window.goatcounter.count === 'function')
+      window.goatcounter.count({path:sciezka, title:tytul, event:true});
+  }catch(e){}
+}
+</script>
+
+<style>
+:root{
+  --bg:#f6f7f5; --card:#ffffff; --ink:#1b2018; --muted:#5f6b5c; --line:#dfe4dc;
+  --accent:#2f7d4f; --accent-soft:#e6f1e9; --good:#1f7a4d; --good-bg:#e4f3ea;
+  --bad:#a52f3c; --bad-bg:#fbe8ea; --warn:#8a6100; --warn-bg:#fdf1d8;
+  --tem:#6b4ea8; --tem-bg:#eee9f8;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#14170f; --card:#1c2018; --ink:#e8ece3; --muted:#9aa694; --line:#2f362a;
+    --accent:#6bbd8a; --accent-soft:#22301f; --good:#78c99b; --good-bg:#1c2f23;
+    --bad:#e88f9a; --bad-bg:#332023; --warn:#e0b969; --warn-bg:#302713;
+    --tem:#b39ce6; --tem-bg:#251f33;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+.wrap{max-width:820px;margin:0 auto;padding:24px 18px 80px}
+h1{font-size:1.5rem;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:1.1rem;margin:0 0 12px}
+.sub{color:var(--muted);font-size:.92rem;margin:0 0 24px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:16px}
+fieldset{border:0;padding:0;margin:0 0 20px}
+legend{font-weight:600;font-size:.95rem;margin-bottom:8px;padding:0}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);
+  background:var(--card);border-radius:999px;padding:8px 14px;cursor:pointer;font-size:.9rem;user-select:none}
+.chip:hover{border-color:var(--accent)}
+.chip input{accent-color:var(--accent);margin:0}
+.chip.on{background:var(--accent-soft);border-color:var(--accent)}
+.count{color:var(--muted);font-size:.82rem}
+button{font:inherit;cursor:pointer;border-radius:9px;border:1px solid var(--line);
+  background:var(--card);color:var(--ink);padding:10px 18px}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+button.primary:hover{filter:brightness(1.08)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.bar{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:6px}
+.bar > i{display:block;height:100%;background:var(--accent);transition:width .25s}
+.meta{display:flex;justify-content:space-between;font-size:.82rem;color:var(--muted);margin-bottom:18px}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tag{font-size:.72rem;letter-spacing:.03em;text-transform:uppercase;padding:3px 9px;
+  border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:600}
+.tag.tem{background:var(--tem-bg);color:var(--tem)}
+.tag.konw{background:var(--warn-bg);color:var(--warn)}
+.intro{background:var(--accent-soft);border-left:3px solid var(--accent);
+  padding:12px 14px;border-radius:0 8px 8px 0;font-size:.93rem;margin-bottom:14px;white-space:pre-wrap}
+.q{font-weight:600;margin:0 0 14px;font-size:1.04rem}
+.answers{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.ans{display:flex;gap:11px;align-items:flex-start;border:1px solid var(--line);
+  border-radius:10px;padding:11px 13px;cursor:pointer;background:var(--card)}
+.ans:hover{border-color:var(--accent)}
+.ans input{accent-color:var(--accent);margin:3px 0 0;flex:none}
+.ans .ltr{font-weight:700;flex:none;color:var(--muted);min-width:1.1em}
+.ans.sel{background:var(--accent-soft);border-color:var(--accent)}
+.ans.ok{background:var(--good-bg);border-color:var(--good)}
+.ans.no{background:var(--bad-bg);border-color:var(--bad)}
+.ans.locked{cursor:default}
+figure{margin:0 0 14px}
+figure img{width:100%;border:1px solid var(--line);border-radius:8px;display:block}
+details{margin-bottom:14px;border:1px solid var(--line);border-radius:8px;padding:0 12px}
+details[open]{padding-bottom:12px}
+summary{cursor:pointer;padding:10px 0;font-size:.9rem;color:var(--accent);font-weight:600}
+.fb{border-radius:9px;padding:12px 14px;font-size:.93rem;margin-bottom:16px}
+.fb.ok{background:var(--good-bg);color:var(--good)}
+.fb.no{background:var(--bad-bg);color:var(--bad)}
+.fb b{display:block;margin-bottom:3px}
+.fb .why{color:var(--ink);opacity:.85;margin-top:6px;display:block}
+.score{font-size:3rem;font-weight:700;letter-spacing:-.02em;line-height:1;margin:0 0 4px}
+.score small{font-size:1rem;font-weight:400;color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin-bottom:8px}
+td,th{text-align:left;padding:7px 0;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600;font-size:.82rem}
+td:last-child,th:last-child{text-align:right}
+.miss{border-top:1px solid var(--line);padding-top:12px;margin-top:12px;font-size:.9rem}
+.miss p{margin:0 0 4px}
+.miss .yours{color:var(--bad)}
+.miss .right{color:var(--good)}
+.miss .lnk{font-size:.85rem}
+a{color:var(--accent)}
+.hide{display:none}
+.note{font-size:.85rem;color:var(--muted);margin-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ============ EKRAN STARTOWY ============ -->
+<section id="setup">
+  <h1>W zdrowym ciele, zdrowy duch</h1>
+  <p class="sub">Konkurs Tematyczny 2026/2027 · trening przed etapem szkolnym (13 listopada 2026, 60 minut) · <span id="cAll"></span> zadań · pytania i odpowiedzi w losowej kolejności</p>
+
+  <div class="card">
+    <fieldset>
+      <legend>Tematy (zakres wymagań etapu szkolnego)</legend>
+      <div class="opts" id="fTem"></div>
+      <div class="row" style="margin-top:10px"><button id="temAll" style="padding:5px 12px;font-size:.85rem">zaznacz wszystkie</button><button id="temNone" style="padding:5px 12px;font-size:.85rem">odznacz wszystkie</button></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Liczba pytań</legend>
+      <div class="opts" id="fIle"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Tryb</legend>
+      <div class="opts" id="fTryb"></div>
+    </fieldset>
+
+    <div class="row">
+      <button class="primary" id="start">Rozpocznij test</button>
+      <span class="count" id="cWybor"></span>
+    </div>
+    <p class="note">W zadaniach może być <b>więcej niż jedna</b> poprawna odpowiedź — trzeba zaznaczyć wszystkie. Zaznaczenie mniejszej lub większej liczby odpowiedzi niż przewidziano to 0 pkt.</p>
+  </div>
+</section>
+
+<!-- ============ EKRAN TESTU ============ -->
+<section id="quiz" class="hide">
+  <div class="bar"><i id="prog"></i></div>
+  <div class="meta"><span id="mPoz"></span><span id="mWynik"></span></div>
+
+  <div class="card">
+    <div class="tags" id="qTags"></div>
+    <div id="qIntro"></div>
+    <p class="q" id="qText"></p>
+    <div class="answers" id="qAns"></div>
+    <div id="qFb"></div>
+    <div class="row">
+      <button class="primary" id="check">Sprawdź</button>
+      <button class="primary hide" id="next">Dalej</button>
+      <button id="quit">Przerwij</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EKRAN WYNIKU ============ -->
+<section id="result" class="hide">
+  <div class="card">
+    <p class="score" id="rScore"></p>
+    <p class="sub" id="rNote"></p>
+    <table id="rTable"></table>
+    <div class="row" style="margin-top:16px">
+      <button class="primary" id="again">Nowy test</button>
+      <button id="redo" class="hide">Powtórz błędne</button>
+    </div>
+  </div>
+  <div class="card hide" id="rMiss">
+    <h2>Zadania z błędną odpowiedzią</h2>
+    <div id="rMissList"></div>
+  </div>
+</section>
+
+<p class="note">Konkurs odbywa się po raz pierwszy, więc nie ma arkuszy z poprzednich lat. Zadania są ćwiczeniowe — ułożone według
+<a href="https://kuratorium.krakow.pl/wp-content/uploads/2026/07/zal.-nr-2-zakres-wiedzy-i-umiejetnosci-oraz-wykaz-literatury-2.pdf" target="_blank" rel="noopener">zakresu wiedzy i umiejętności (zał. nr 2)</a>,
+a nie przepisane z oficjalnego arkusza. Literatura: B. Woynarowska, M. Woynarowska, <i>Edukacja zdrowotna</i>, PWN 2025; podręczniki biologii i EDB.
+<a href="https://kuratorium.krakow.pl/konkurs-tematyczny-w-zdrowym-ciele-zdrowy-duch-dla-uczniow-szkol-podstawowych-wojewodztwa-malopolskiego-w-roku-szkolnym-2026-2027/" target="_blank" rel="noopener">Strona konkursu</a>.</p>
+
+</div>
+
+<script src="dane-szkolny.js"></script>
+<script>
+const DB = D_SZKOLNY;
+const TEMATY = {
+  1:'Zdrowie i zdrowy styl życia',
+  2:'Czynniki wpływające na zdrowie',
+  3:'Higiena osobista',
+  4:'Zasady zdrowego żywienia',
+  5:'Złe diety, suplementy, energetyki',
+  6:'Rozpoznawanie objawów chorobowych',
+  7:'Gorączka',
+  8:'Pierwsza pomoc'
+};
+const LTR = 'ABCDEFGH'.split('');
+
+const state = {
+  tem:{1:true,2:true,3:true,4:true,5:true,6:true,7:true,8:true},
+  ile:20,
+  tryb:'nat',          // 'nat' = od razu, 'koniec' = dopiero na końcu
+  pula:[], i:0, odp:[], sprawdzone:false
+};
+
+/* ---------- budowa filtrów ---------- */
+function chip(box, val, label, group, type){
+  const id = group+'_'+val;
+  const l = document.createElement('label');
+  l.className = 'chip'; l.dataset.val = val;
+  l.innerHTML = `<input type="${type}" name="${group}" id="${id}"><span>${label}</span>`;
+  box.appendChild(l);
+  return l.querySelector('input');
+}
+function buildFilters(){
+  const tb0 = document.getElementById('fTem');
+  Object.keys(TEMATY).forEach(v=>{
+    const n = DB.filter(q=>q.t==v).length;
+    const i = chip(tb0, v, `${v}. ${TEMATY[v]} <span class="count">(${n})</span>`, 'tem', 'checkbox');
+    i.checked = state.tem[v];
+    i.onchange = ()=>{ state.tem[v]=i.checked; refresh(); };
+  });
+  const setAll = val => {
+    Object.keys(state.tem).forEach(k=>{ state.tem[k]=val; document.getElementById('tem_'+k).checked=val; });
+    refresh();
+  };
+  document.getElementById('temAll').onclick = ()=>setAll(true);
+  document.getElementById('temNone').onclick = ()=>setAll(false);
+
+  const ib = document.getElementById('fIle');
+  [10,20,30,50,0].forEach(v=>{
+    const i = chip(ib,v,v===0?'wszystkie':v,'ile','radio');
+    i.checked = state.ile===v;
+    i.onchange = ()=>{ state.ile=v; refresh(); };
+  });
+  const tb = document.getElementById('fTryb');
+  [['nat','Sprawdzaj po każdym pytaniu'],['koniec','Wynik dopiero na końcu']].forEach(([v,t])=>{
+    const i = chip(tb,v,t,'tryb','radio');
+    i.checked = state.tryb===v;
+    i.onchange = ()=>{ state.tryb=v; refresh(); };
+  });
+  document.getElementById('cAll').textContent = DB.length;
+  refresh();
+}
+function matching(){
+  return DB.filter(q => state.tem[q.t]);
+}
+function refresh(){
+  document.querySelectorAll('.chip').forEach(l=>{
+    l.classList.toggle('on', l.querySelector('input').checked);
+  });
+  const n = matching().length;
+  document.getElementById('cWybor').textContent =
+    n===0 ? 'Wybierz co najmniej jeden temat' :
+    `w puli: ${n} · w teście: ${state.ile===0?n:Math.min(state.ile,n)}`;
+  document.getElementById('start').disabled = n===0;
+}
+
+/* ---------- losowanie ---------- */
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+function prepare(q){
+  const idx = shuffle(q.o.map((_,i)=>i));
+  return {
+    ref:q,
+    opcje: idx.map(i=>q.o[i]),
+    poprawne: idx.map((orig,pos)=> q.c.includes(orig) ? pos : -1).filter(p=>p>=0).sort((a,b)=>a-b)
+  };
+}
+
+/* ---------- test ---------- */
+function startQuiz(list){
+  state.pula = list.map(prepare);
+  state.i = 0; state.odp = []; state.sprawdzone = false;
+  show('quiz'); render();
+}
+function show(id){
+  ['setup','quiz','result'].forEach(s=>document.getElementById(s).classList.toggle('hide', s!==id));
+  window.scrollTo(0,0);
+}
+function render(){
+  const item = state.pula[state.i], q = item.ref;
+  document.getElementById('prog').style.width = (state.i/state.pula.length*100)+'%';
+  document.getElementById('mPoz').textContent = `Pytanie ${state.i+1} z ${state.pula.length}`;
+  const pkt = state.odp.filter(o=>o.ok).length;
+  document.getElementById('mWynik').textContent = state.tryb==='nat' ? `${pkt} pkt` : '';
+
+  document.getElementById('qTags').innerHTML =
+    `<span class="tag">${q.t}. ${TEMATY[q.t]}</span>`+
+    `<span class="tag" style="background:transparent;color:var(--muted)">zad. ${q.n}</span>`;
+
+  document.getElementById('qIntro').innerHTML = q.w ? `<div class="intro">${q.w}</div>` : '';
+  document.getElementById('qText').textContent = q.q;
+
+  const box = document.getElementById('qAns');
+  box.innerHTML = '';
+  item.opcje.forEach((txt,i)=>{
+    const l = document.createElement('label');
+    l.className = 'ans'; l.dataset.i = i;
+    l.innerHTML = `<input type="checkbox" value="${i}"><span class="ltr">${LTR[i]}.</span><span>${txt}</span>`;
+    l.querySelector('input').onchange = e => l.classList.toggle('sel', e.target.checked);
+    box.appendChild(l);
+  });
+
+  document.getElementById('qFb').innerHTML = '';
+  document.getElementById('check').classList.remove('hide');
+  document.getElementById('next').classList.add('hide');
+  state.sprawdzone = false;
+}
+function selected(){
+  return [...document.querySelectorAll('#qAns input:checked')].map(i=>+i.value).sort((a,b)=>a-b);
+}
+function checkAnswer(){
+  const item = state.pula[state.i], sel = selected();
+  const ok = sel.length===item.poprawne.length && sel.every((v,i)=>v===item.poprawne[i]);
+  state.odp.push({item, sel, ok});
+
+  if(state.tryb==='nat'){
+    document.querySelectorAll('#qAns .ans').forEach(l=>{
+      const i = +l.dataset.i;
+      l.classList.add('locked'); l.classList.remove('sel');
+      l.querySelector('input').disabled = true;
+      if(item.poprawne.includes(i)) l.classList.add('ok');
+      else if(sel.includes(i)) l.classList.add('no');
+    });
+    const litery = item.poprawne.map(i=>LTR[i]).join(', ');
+    document.getElementById('qFb').innerHTML =
+      `<div class="fb ${ok?'ok':'no'}"><b>${ok?'✓ Dobrze':'✗ Źle'}</b>`+
+      `Poprawna odpowiedź: <b style="display:inline">${litery}</b>`+
+      (item.ref.x ? `<span class="why">${item.ref.x}</span>` : '')+
+      `</div>`;
+    document.getElementById('check').classList.add('hide');
+    document.getElementById('next').classList.remove('hide');
+    document.getElementById('next').textContent =
+      state.i+1 < state.pula.length ? 'Dalej' : 'Zobacz wynik';
+    state.sprawdzone = true;
+  } else {
+    nextQ();
+  }
+}
+function nextQ(){
+  if(state.i+1 < state.pula.length){ state.i++; render(); window.scrollTo(0,0); }
+  else finish();
+}
+
+/* ---------- wynik ---------- */
+function finish(){
+  const total = state.odp.length, pkt = state.odp.filter(o=>o.ok).length;
+  const proc = Math.round(pkt/total*100);
+  document.getElementById('rScore').innerHTML = `${pkt} / ${total} <small>= ${proc}%</small>`;
+  document.getElementById('rNote').textContent =
+    (proc>=75 ? 'Powyżej progu: ' : 'Poniżej progu: ') +
+    'do etapu rejonowego kwalifikuje min. 75% punktów możliwych do uzyskania (regulamin 2026/2027).';
+
+  const grupy = {};
+  state.odp.forEach(o=>{
+    const t = o.item.ref.t;
+    grupy[t] = grupy[t] || {n:0, ok:0};
+    grupy[t].n++; if(o.ok) grupy[t].ok++;
+  });
+  let html = '<tr><th>Temat</th><th>Wynik</th></tr>';
+  Object.keys(grupy).sort((a,b)=>a-b).forEach(t=>{
+    const g = grupy[t];
+    html += `<tr><td>${t}. ${TEMATY[t]}</td><td>${g.ok} / ${g.n} (${Math.round(g.ok/g.n*100)}%)</td></tr>`;
+  });
+  document.getElementById('rTable').innerHTML = html;
+
+  const zle = state.odp.filter(o=>!o.ok);
+  document.getElementById('redo').classList.toggle('hide', zle.length===0);
+  document.getElementById('rMiss').classList.toggle('hide', zle.length===0);
+  document.getElementById('rMissList').innerHTML = zle.map(o=>{
+    const q = o.item.ref;
+    return `<div class="miss">
+      <p><b>${q.q}</b></p>
+      <p class="yours">Twoja odpowiedź: ${o.sel.length? o.sel.map(i=>o.item.opcje[i]).join(' · ') : '(brak)'}</p>
+      <p class="right">Poprawnie: ${o.item.poprawne.map(i=>o.item.opcje[i]).join(' · ')}</p>
+      ${q.x?`<p style="color:var(--muted)">${q.x}</p>`:''}
+      <p class="lnk">Temat ${q.t}: ${TEMATY[q.t]}, zad. ${q.n}</p>
+    </div>`;
+  }).join('');
+
+  const kosz = Math.min(90, Math.floor(proc/10)*10);
+  stat(`zdrowie/test-koniec/pytan-${total}/wynik-${kosz}-${kosz===90?100:kosz+9}-proc`, 'Zdrowie: ukończenie testu');
+
+  state.blednePula = zle.map(o=>o.item.ref);
+  show('result');
+}
+
+/* ---------- podpięcie ---------- */
+document.getElementById('start').onclick = ()=>{
+  const pool = shuffle(matching().slice());
+  const lista = state.ile===0 ? pool : pool.slice(0, state.ile);
+  const tem = Object.keys(state.tem).filter(k=>state.tem[k]).join('') || 'brak';
+  stat(`zdrowie/test-start/tematy-${tem}/pytan-${lista.length}`, 'Zdrowie: rozpoczęcie testu');
+  startQuiz(lista);
+};
+document.getElementById('check').onclick = checkAnswer;
+document.getElementById('next').onclick = nextQ;
+document.getElementById('quit').onclick = ()=>{
+  if(state.odp.length) finish(); else show('setup');
+};
+document.getElementById('again').onclick = ()=>show('setup');
+document.getElementById('redo').onclick = ()=>startQuiz(shuffle(state.blednePula.slice()));
+
+buildFilters();
+</script>
+</body>
+</html>
